@@ -14,13 +14,15 @@ def main():
     os.makedirs('outputs', exist_ok=True)
 
     print("Fetching papers from arXiv...")
-    arxiv_papers = fetch_arxiv_papers(SEARCH_QUERY, max_results=NUM_PAPERS//2)
+#    arxiv_papers = fetch_arxiv_papers(SEARCH_QUERY, max_results=NUM_PAPERS//2)
+    arxiv_papers = fetch_arxiv_papers(SEARCH_QUERY, max_results=NUM_PAPERS)
 
-    print("Fetching papers from PubMed...")
-    pubmed_papers = fetch_pubmed_papers(SEARCH_QUERY, max_results=NUM_PAPERS//2)
+    # print("Fetching papers from PubMed...")
+    # pubmed_papers = fetch_pubmed_papers(SEARCH_QUERY, max_results=NUM_PAPERS//2)
 
     # Combine papers
-    papers = arxiv_papers + pubmed_papers
+    # papers = arxiv_papers + pubmed_papers
+    papers = arxiv_papers
     papers = papers[:NUM_PAPERS]  # Ensure we have exactly NUM_PAPERS
 
     # Save raw paper data

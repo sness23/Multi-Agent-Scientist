@@ -1,10 +1,14 @@
-# utils/summarization_utils.py
-
-import openai
-from config import OPENAI_API_KEY, SUMMARIZATION_MODEL
+import os
+from openai import OpenAI
+from config import SUMMARIZATION_MODEL
 from tqdm import tqdm
 
-openai.api_key = OPENAI_API_KEY
+aiml_api_key = os.getenv('AIML_API_KEY')
+
+client = OpenAI(
+    api_key=aiml_api_key,
+    base_url="https://api.aimlapi.com/",
+)
 
 def summarize_papers(papers):
     for paper in tqdm(papers, desc='Summarizing papers'):
@@ -17,16 +21,14 @@ def summarize_papers(papers):
     return papers
 
 def summarize_text(text):
-    prompt = f"Summarize the following scientific abstract in approximately 200 words:\n\n{text}"
+    prompt = f"Summarize the following scientific abstract in for an expert in the field:\n\n{text}"
     try:
-        response = openai.ChatCompletion.create(
+        response = client.chat.completions.create(
             model=SUMMARIZATION_MODEL,
             messages=[
-                {'role': 'system', 'content': 'You are an expert scientific writer.'},
                 {'role': 'user', 'content': prompt}
             ],
-            max_tokens=500,
-            temperature=0.5,
+            max_tokens=2000
         )
         summary = response['choices'][0]['message']['content']
         return summary.strip()

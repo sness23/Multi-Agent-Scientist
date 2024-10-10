@@ -15,3 +15,11 @@ SUMMARIZATION_MODEL = "o1-mini"
 # Entrez email to use
 ENTREZ_EMAIL = os.getenv("EMAIL")
 
+# File to put arxiv abstracts in
+ARXIV_ABSTRACTS_FILE = 'data/arxiv-papers.json'
+
+# Summarized abstracts
+SUMMARIZED_FILE = 'data/summarized.md'
+
+# Literature review
+LITERATURE_REVIEW_FILE = 'data/literature_review.md'

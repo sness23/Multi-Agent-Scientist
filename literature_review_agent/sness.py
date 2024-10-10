@@ -4,7 +4,7 @@ import os
 from utils.arxiv_utils import fetch_arxiv_papers
 from utils.pubmed_utils import fetch_pubmed_papers
 from utils.summarization_utils import summarize_papers
-from config import NUM_PAPERS, SEARCH_QUERY, OUTPUT_FILE
+from config import NUM_PAPERS, SEARCH_QUERY, OUTPUT_FILE, ARXIV_ABSTRACTS_FILE, SUMMARIZED_FILE
 from tqdm import tqdm
 import json
 
@@ -12,36 +12,27 @@ def main():
     # Ensure necessary directories exist
     os.makedirs('data', exist_ok=True)
     os.makedirs('outputs', exist_ok=True)
+    
+    if not os.path.exists(ARXIV_ABSTRACTS_FILE):
+        arxiv_papers = fetch_arxiv_papers(SEARCH_QUERY, max_results=NUM_PAPERS)
+        with open(ARXIV_ABSTRACTS_FILE, 'w', encoding='utf-8') as f:
+            json.dump(arxiv_papers, f, ensure_ascii=False, indent=4)
+    
+    if not os.path.exists(SUMMARIZED_FILE):
+        summarized_papers = summarize_papers(ARXIV_ABSTRACTS_FILE)
+        with open(SUMMARIZED_FILE, 'w', encoding='utf-8') as f:
+            json.dump(summarized_papers, f, ensure_ascii=False, indent=4)
 
-    print("Fetching papers from arXiv...")
-#    arxiv_papers = fetch_arxiv_papers(SEARCH_QUERY, max_results=NUM_PAPERS//2)
-    arxiv_papers = fetch_arxiv_papers(SEARCH_QUERY, max_results=NUM_PAPERS)
+    if not os.path.exists(OUTPUT_FILE):
+        document = create_literature_review(SUMMARIZED_FILE, SEARCH_QUERY)
+        with open(OUTPUT_FILE, 'w', encoding='utf-8') as f:
+            json.dump(papers, f, ensure_ascii=False, indent=4)
+            print(f"Literature review saved to '{OUTPUT_FILE}'.")
 
-    # print("Fetching papers from PubMed...")
-    # pubmed_papers = fetch_pubmed_papers(SEARCH_QUERY, max_results=NUM_PAPERS//2)
+def create_literature_review(input_filename, topic):
+    with open(input_filename, 'r') as file:
+        papers = json.load(file)
 
-    # Combine papers
-    # papers = arxiv_papers + pubmed_papers
-    papers = arxiv_papers
-    papers = papers[:NUM_PAPERS]  # Ensure we have exactly NUM_PAPERS
-
-    # Save raw paper data
-    with open('data/papers.json', 'w', encoding='utf-8') as f:
-        json.dump(papers, f, ensure_ascii=False, indent=4)
-
-    print("Summarizing papers...")
-    papers = summarize_papers(papers)
-
-    # Generate literature review document
-    document = create_literature_review(papers, SEARCH_QUERY)
-
-    # Save document
-    with open(OUTPUT_FILE, 'w', encoding='utf-8') as f:
-        f.write(document)
-
-    print(f"Literature review saved to '{OUTPUT_FILE}'.")
-
-def create_literature_review(papers, topic):
     document = ''
     # Introduction
     document += f"# Literature Review on {topic}\n\n"

@@ -1,4 +1,5 @@
 import os
+import json
 from openai import OpenAI
 from config import SUMMARIZATION_MODEL
 from tqdm import tqdm
@@ -10,7 +11,11 @@ client = OpenAI(
     base_url="https://api.aimlapi.com/",
 )
 
-def summarize_papers(papers):
+def summarize_papers(paper_filename):
+    print("paper_filename=",paper_filename)
+    with open(paper_filename, 'r') as file:
+        papers = json.load(file)
+    
     for paper in tqdm(papers, desc='Summarizing papers'):
         abstract = paper.get('abstract', '')
         if abstract:

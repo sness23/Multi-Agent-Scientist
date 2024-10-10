@@ -23,15 +23,16 @@ def summarize_papers(papers):
 def summarize_text(text):
     prompt = f"Summarize the following scientific abstract in for an expert in the field:\n\n{text}"
     try:
-        response = client.chat.completions.create(
+        chat_completion = client.chat.completions.create(
             model=SUMMARIZATION_MODEL,
             messages=[
                 {'role': 'user', 'content': prompt}
             ],
             max_tokens=2000
         )
-        summary = response['choices'][0]['message']['content']
-        return summary.strip()
+        response = chat_completion.choices[0].message.content
+        return response
+    
     except Exception as e:
         print(f"An error occurred during summarization: {e}")
         return "Summary not available due to an error."

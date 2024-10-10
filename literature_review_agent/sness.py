@@ -26,7 +26,8 @@ def main():
     if not os.path.exists(OUTPUT_FILE):
         document = create_literature_review(SUMMARIZED_FILE, SEARCH_QUERY)
         with open(OUTPUT_FILE, 'w', encoding='utf-8') as f:
-            json.dump(papers, f, ensure_ascii=False, indent=4)
+            f.write(document)
+            #json.dump(document, f, ensure_ascii=False, indent=4)
             print(f"Literature review saved to '{OUTPUT_FILE}'.")
 
 def create_literature_review(input_filename, topic):
